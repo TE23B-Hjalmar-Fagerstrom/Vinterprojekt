@@ -2,6 +2,9 @@
 int playerMove = 0;
 int playerArmor = 1;
 int playerDefens = 0;
+int playerAttack = 10;
+List<int> playerDamage = [playerAttack, playerAttack + 10, playerAttack + 30];
+List<int> damageChance = [2, 5, 8];
 int playerChois = 100;
 int playerHealth = 100;
 string player = "";
@@ -16,8 +19,11 @@ int gold = 0;
 int monsterHealth = 0;
 int monsterAttack = 0;
 int monsterDefens = 0;
+List<string> attcakHit = ["Slime spottar en svag syra på dig", "Greater Slime hoppar emot dig i en hög fart", "Slime kungen beordrar en grupp slime att svärma dig"];
+List<string> attcakMiss = ["Slimet hoppar mot dig och du undvek precis i tid", "Greater Slime gör en stor syr boll och kastar den emot dig men du lyckades gömma dig i tid", "Slime kungen på börjar en magisk attack men du påminner den att den inte kan magi"];
 int level = 1;
 
+// påverkar bådas chans att träffa
 int chance = 0;
 
 Console.WriteLine("Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!");
@@ -26,6 +32,7 @@ string yesNo = Console.ReadLine().ToUpper();
 
 while (yesNo != "Y" && yesNo != "N")
 {
+    Console.WriteLine("skriv Y för ja eller N för nej");
     yesNo = Console.ReadLine().ToUpper();
 }
 
@@ -56,9 +63,21 @@ if (theEscape == true)
     Console.WriteLine("Du flydde in till nästa rum");
     theEscape = false;
 }
+level++;
 
-level ++;
-Console.WriteLine("");
+if (playerHealth > 0)
+{
+    Console.WriteLine("I det nya rummet så finns två dörrar. En av dörrarna är i metall och har ett rött x på sig.");
+    Console.WriteLine("Den andra dörren är i trä och har en skylt med något som liknar ett stånd");
+    Console.WriteLine("Vilken dörr går du igenom? (1 för metall 2 för trä)");
+
+    while (playerChois < 1 && playerChois > 2)
+    {
+        player = Console.ReadLine();
+        int.TryParse(player, out playerChois);
+    }
+
+}
 
 
 
@@ -83,47 +102,26 @@ void fight()
             if (playerMove == 1) // om spelaren väljer attack
             {
                 Console.WriteLine("1. 10 dmg 80% success  2. 20 dmg 50% success  3. 40 dmg 20% success  4. backa");
-                while (playerChois > 4 || playerChois < 1) // sålänge spelaren inte väljer något ovan stående
+                while (playerChois > 4 || playerChois < 1) // sålänge spelaren inte väljer något av ovan stående
                 {
                     player = Console.ReadLine();
                     int.TryParse(player, out playerChois);
                 }
                 chance = Random.Shared.Next(1, 11);
 
-                if (playerChois == 1 && chance > 2)
+                if (playerChois < 4)
                 {
-                    Console.WriteLine("Du träfade");
-                    monsterHealth -= 10 - monsterDefens;
-                    playerTurn = false;
-                }
-                else if (playerChois == 1 && chance < 2)
-                {
-                    Console.WriteLine("Du missade");
-                    playerTurn = false;
-                }
-
-                if (playerChois == 2 && chance <= 5)
-                {
-                    Console.WriteLine("Du träfade");
-                    monsterHealth -= 20 - monsterDefens;
-                    playerTurn = false;
-                }
-                else if (playerChois == 2 && chance > 5)
-                {
-                    Console.WriteLine("Du missade");
-                    playerTurn = false;
-                }
-
-                if (playerChois == 3 && chance <= 2)
-                {
-                    Console.WriteLine("Du träfade");
-                    monsterHealth -= 20 - monsterDefens;
-                    playerTurn = false;
-                }
-                else if (playerChois == 3 && chance > 2)
-                {
-                    Console.WriteLine("Du missade");
-                    playerTurn = false;
+                    if (chance > damageChance[playerChois - 1])
+                    {
+                        Console.WriteLine("Du träfade");
+                        monsterHealth -= playerDamage[playerChois - 1] - monsterDefens;
+                        playerTurn = false;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Du missade");
+                        playerTurn = false;
+                    }
                 }
 
                 if (playerChois == 4)
@@ -136,7 +134,7 @@ void fight()
             if (playerMove == 2) // om spelaren väljer försvar
             {
                 playerDefens = 2 * playerArmor;
-                Console.WriteLine($"1. skyda dig ({playerDefens} dmg)  2. backa");
+                Console.WriteLine($"1. skyda dig (tar {playerDefens} minder dmg)  2. backa");
                 while (playerChois > 2 || playerChois < 1)
                 {
                     player = Console.ReadLine();
@@ -163,11 +161,18 @@ void fight()
                     player = Console.ReadLine();
                     int.TryParse(player, out playerChois);
                 }
-                if (playerChois == 1)
+                if (playerChois == 1 && item > 0)
                 {
                     playerHealth += 25;
                     item--;
-                    playerTurn = false;
+                    playerMove = 0;
+                    playerChois = 0;
+                }
+                if (playerChois == 1 && item == 0)
+                {
+                    Console.WriteLine("Du har inga flera hälsodrycker");
+                    playerMove = 0;
+                    playerChois = 0;
                 }
                 else
                 {
@@ -203,15 +208,16 @@ void fight()
             {
                 playerMove = 0;
                 playerChois = 0;
-                chance = Random.Shared.Next(1,11);
+                chance = Random.Shared.Next(1, 11);
                 if (chance > 3)
                 {
-                    Console.WriteLine($"slime spottar en svag syra på dig och gör {monsterAttack - (playerArmor + playerDefens)} skada");
+                    Console.Write(attcakHit[level-1]);
+                    Console.WriteLine($" och gör {monsterAttack - (playerArmor + playerDefens)} skada");
                     playerHealth -= monsterAttack - (playerArmor + playerDefens);
                 }
                 else
                 {
-                    Console.WriteLine("slimet hoppar mot dig och du undvek precis i tid");
+                    Console.WriteLine(attcakMiss[level-1]);
                 }
                 playerTurn = true;
             }
@@ -240,7 +246,16 @@ void monsterAppearance(int level)
     {
         Console.WriteLine();
         Console.WriteLine($"Greater Slime ( *-* )");
-        Console.WriteLine($"ATK {monsterAttack} HP {monsterHealth} DEF {monsterDefens}");
+        Console.WriteLine($"ATK {monsterAttack-5} HP {monsterHealth} DEF {monsterDefens}");
+        Console.WriteLine();
+    }
+
+    if (level == 3)
+    {
+        Console.WriteLine();
+        Console.WriteLine( "           ^^^^^^^   ");
+        Console.WriteLine($"Slime KING(  *-*  )");
+        Console.WriteLine($"ATK {monsterAttack-15} HP {monsterHealth} DEF {monsterDefens}");
         Console.WriteLine();
     }
 }
