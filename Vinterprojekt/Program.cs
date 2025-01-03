@@ -3,7 +3,7 @@ int playerMove = 0;
 int playerArmor = 1;
 int playerDefens = 0;
 int playerAttack = 10;
-List<int> playerDamage = [playerAttack, playerAttack + 10, playerAttack + 30];
+List<int> playerDamage = [0, 10, 30];
 List<int> damageChance = [2, 5, 8];
 int playerChois = 100;
 int playerHealth = 100;
@@ -28,7 +28,7 @@ int chance = 0; // påverkar bådas chans att träffa
 bool playAgain = true; // om spelaren vill spela igen
 
 // gör det mer intreserand att läsa början igen plus ger bakgrund till hur du fick alla saker
-List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.",];
+List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.","Du vet vad som måste göras.", "Du vet vad som måste göras.", "Du vet vad som måste göras.",];
 int storyProgres = 0;
 
 while (playAgain == true)
@@ -75,7 +75,7 @@ while (playAgain == true)
         gold = 0;
         storyProgres = 0;
 
-        Console.WriteLine("Du besegrade Slime kungen. Vill du slå han igen? Y/N");
+        Console.WriteLine("Du besegrade Slime kungen. Vill du spela om igen? Y/N");
         string yesNo = Console.ReadLine().ToUpper();
 
         while (yesNo != "Y" && yesNo != "N")
@@ -153,11 +153,12 @@ void spel()
         else
         {
             shop();
+            level ++;
         }
 
     }
 
-    if (playerHealth > 0)
+    if (1 == 1)
     {
         Console.WriteLine();
         Console.WriteLine("Efter du hndlade det du fan viktigt så fortaste du till nästa rum.");
@@ -198,7 +199,7 @@ void fight()
 
             if (playerMove == 1) // om spelaren väljer attack
             {
-                Console.WriteLine("1. 10 dmg 80% success  2. 20 dmg 50% success  3. 40 dmg 20% success  4. backa");
+                Console.WriteLine($"1. {playerAttack} dmg 80% success  2. {playerAttack + 10} dmg 50% success  3. {playerAttack + 30} dmg 20% success  4. backa");
                 while (playerChois > 4 || playerChois < 1) // sålänge spelaren inte väljer något av ovan stående
                 {
                     player = Console.ReadLine();
@@ -213,7 +214,7 @@ void fight()
                     {
                         Console.WriteLine("Du träfade");
                         Console.WriteLine();
-                        monsterHealth -= playerDamage[playerChois - 1] - monsterDefens;
+                        monsterHealth -= playerAttack + playerDamage[playerChois - 1] - monsterDefens;
                         playerTurn = false;
                     }
                     else
@@ -339,7 +340,7 @@ void fight()
 
     if (monsterHealth < 0 && theEscape == false)
     {
-        gold = 5 * level;
+        gold += 5 * level;
         Console.WriteLine($"Du bäsegrade slimet och fick {gold} guld och fortsätt till nästa rum");
     }
 
@@ -391,21 +392,18 @@ void shop()
     Console.WriteLine();
     Console.WriteLine("Du rör dig mott trä dörren och hör en röst mumlande på andra sidan.");
     Console.WriteLine("När du öppnar dörren blir du bemöt av en eldre man som verkar driva en affär här och säljer.");
-    List<string> shopItems = ["1. hälsodrycker", "2. skydd (+3 armor)", "3. slipsten (+10 dmg)"];
-    List<int> itemPrices = [3, 7, 10];
+    List<string> shopItems = ["hälsodryck", "skydd (+3 armor)", "slipsten (+10 dmg)"];
+    List<int> itemPrices = [2, 5, 10];
 
-    while (playerChois != 4)
+    while (playerChois != 4) // fortsätter tills spelaren lämnar 
     {
         Console.WriteLine();
         Console.WriteLine($"du har {gold} guld");
         for (int i = 0; i < 3; i++)
         {
-            Console.Write(shopItems[i]);
-            Console.Write(" för ");
-            Console.Write(itemPrices[i]);
-            Console.WriteLine(" guld");
+            Console.WriteLine($"{i + 1}. {shopItems[i]} för {itemPrices[i]} guld"); // skriver upp vad spelaren kan köpa och vad det kostar 
         }
-            Console.WriteLine("4. lämna affär");
+        Console.WriteLine("4. lämna affär");
 
         bool success = false;
         while (success == false || playerChois > 4 || playerChois < 0)
@@ -414,38 +412,29 @@ void shop()
             success = int.TryParse(player, out playerChois);
         }
 
-        if (playerChois == 1 && gold > 2)
+        if (playerChois != 4 && playerChois > 0)
         {
-            Console.WriteLine("Du köpte en hälsodryk för 3 guld.");
-            item ++;
-            gold -= 3;
-        }
-        else if (playerChois == 1 && gold < 2)
-        {
-            Console.WriteLine("Du har inte råd");
-        }
-        
-        if (playerChois == 2 && gold > 5)
-        {
-            Console.WriteLine("Du köpte skydd för 7 guld.");
-            playerArmor += 3;
-            gold -= 7;
-        }
-        else if (playerChois == 2 && gold < 5)
-        {
-            Console.WriteLine("Du har inte råd");
-        }
-
-        if (playerChois == 3 && gold > 10)
-        {
-            Console.WriteLine("Du köpte en slipsten för 10 guld.");
-            playerAttack += 10;
-            gold -= 10;
-        }
-        else if (playerChois == 3 && gold < 10)
-        {
-            Console.WriteLine("Du har inte råd");
+            if (gold >= itemPrices[playerChois - 1]) // kollar om spelaren har råd med det dem valde
+            {
+                Console.WriteLine($"Du köpte en {shopItems[playerChois - 1]} för {itemPrices[playerChois - 1]} guld.");
+                if (playerChois == 1)
+                {
+                    item++;
+                }
+                else if (playerChois == 2)
+                {
+                    playerArmor += 3;
+                }
+                else
+                {
+                    playerAttack += 10;
+                }
+                gold -= itemPrices[playerChois - 1];
+            }
+            else
+            {
+                Console.WriteLine("Du har inte råd");
+            }
         }
     }
-
 }
