@@ -28,7 +28,7 @@ int chance = 0; // påverkar bådas chans att träffa
 bool playAgain = true; // om spelaren vill spela igen
 
 // gör det mer intreserand att läsa början igen plus ger bakgrund till hur du fick alla saker
-List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.","Du vet vad som måste göras.", "Du vet vad som måste göras.", "Du vet vad som måste göras.",];
+List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.","Du vet vad som måste göras.",];
 int storyProgres = 0;
 
 while (playAgain == true)
@@ -40,7 +40,10 @@ while (playAgain == true)
     spel();
     if (playerHealth <= 0)
     {
+        if (storyProgres < 3) // gör så att spelet inte kraschar om man dör väldigt mycket
+        {  
         storyProgres++;
+        }
 
         Console.WriteLine("Du dog. Vill du försöka igen? Y/N");
         string yesNo = Console.ReadLine().ToUpper();
@@ -68,14 +71,14 @@ while (playAgain == true)
 
     if (playerHealth > 0)
     {
-        // gör så att man startar om totalt från början
+        // gör så att man startar om totalt från början om man van
         playerArmor = 1;
         playerAttack = 10;
         item = 0;
         gold = 0;
         storyProgres = 0;
 
-        Console.WriteLine("Du besegrade Slime kungen. Vill du spela om igen? Y/N");
+        Console.WriteLine("Du besegrade Slime kungen. Vill du spela igen? Y/N");
         string yesNo = Console.ReadLine().ToUpper();
 
         while (yesNo != "Y" && yesNo != "N")
@@ -100,6 +103,7 @@ while (playAgain == true)
 void spel()
 {
     Console.WriteLine(story[storyProgres]);
+    Console.WriteLine("");
     Console.WriteLine("I det första rummet finns det en skat kista och en dör. vill du öppna kistan? Y/N");
     string yesNo = Console.ReadLine().ToUpper();
 
@@ -158,10 +162,10 @@ void spel()
 
     }
 
-    if (1 == 1)
+    if (playerHealth > 0)
     {
         Console.WriteLine();
-        Console.WriteLine("Efter du hndlade det du fan viktigt så fortaste du till nästa rum.");
+        Console.WriteLine("Efter du handlade det du fan viktigt så fortaste du till nästa rum.");
         Console.WriteLine("När du kom in i rummet så märkte du att rummet var väldigt öppen nästan som ett tron rum för en kung");
         Console.WriteLine("det är då du la märke till att en stor skugga satt på en torn i längst back i rummet och du mötte ");
 
@@ -321,7 +325,7 @@ void fight()
                         monsterAttack = playerArmor + playerDefens;
                         Console.WriteLine($" och gör {monsterAttack - (playerArmor + playerDefens)} skada");
                         playerHealth -= monsterAttack - (playerArmor + playerDefens);
-                        monsterAttack = 15 * level;
+                        monsterAttack = 15 * level; // setter det tillbaka till orginel värdet 
                     }
                     else
                     {
@@ -352,14 +356,14 @@ void fight()
     level++;
 }
 
-void monster(int level)
+void monster(int level) // säger hur "starkt" ett monster kommer vara beroende på level
 {
     monsterHealth = 25 * level;
     monsterAttack = 15 * level;
     monsterDefens = 0 + level;
 }
 
-void monsterAppearance(int level)
+void monsterAppearance(int level) // skriver ut vilket monster det är och alla monstrets variabler
 {
     if (level == 1)
     {
