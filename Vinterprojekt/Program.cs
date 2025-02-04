@@ -15,7 +15,7 @@ bool theEscape = false;
 int item = 0;
 int gold = 0;
 
-// allt som handlar om monster
+// allt som handlar om monster (ändra styrka i void monster)
 int monsterHealth = 0;
 int monsterAttack = 0;
 int monsterDefens = 0;
@@ -24,7 +24,7 @@ List<string> attcakMiss = ["Slimet hoppar mot dig och du undvek precis i tid", "
 int level = 1;
 
 // värden och text som har med shop att göra
-List<string> shopItems = ["hälsodryck", "skydd (+3 armor)", "slipsten (+10 dmg)"]; // 
+List<string> shopItems = ["hälsodryck", "skydd (+3 armor)", "slipsten (+10 dmg)"]; 
 List<int> itemPrices = [2, 5, 10];
 
 int chance = 0; // påverkar bådas chans att träffa
@@ -32,7 +32,7 @@ int chance = 0; // påverkar bådas chans att träffa
 bool playAgain = true; // om spelaren vill spela igen
 
 // gör det mer intreserand att läsa början igen plus ger bakgrund till hur du fick alla saker
-List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.","Du vet vad som måste göras.",];
+List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.", "Du vet vad som måste göras.",];
 int storyProgres = 0;
 
 while (playAgain == true)
@@ -45,8 +45,8 @@ while (playAgain == true)
     if (playerHealth <= 0)
     {
         if (storyProgres < 3) // gör så att spelet inte kraschar om man dör väldigt mycket
-        {  
-        storyProgres++;
+        {
+            storyProgres++;
         }
 
         Console.WriteLine("Du dog. Vill du försöka igen? Y/N");
@@ -141,7 +141,7 @@ void game()
         Console.WriteLine("Den andra dörren är i trä och har en skylt med något som liknar ett stånd");
         Console.WriteLine("Vilken dörr går du igenom? (1 för metall 2 för trä)");
 
-        TryParseChoic(2,1);
+        TryParseChoic(2, 1);
 
         if (playerChois == 1)
         {
@@ -156,7 +156,7 @@ void game()
         else
         {
             shop();
-            level ++;
+            level++;
         }
 
     }
@@ -173,18 +173,18 @@ void game()
 
 }
 
-void TryParseChoic (int a, int b)
+void TryParseChoic(int a, int b)
 {
     while (playerChois > a || playerChois < b) // sålänge spelaren inte väljer något av ovan stående
-                {
-                    player = Console.ReadLine();
-                    int.TryParse(player, out playerChois);
-                    Console.WriteLine();
-                    if (playerChois > a || playerChois < b)
-                    {
-                        Console.WriteLine($"skriv ett tall mellan {a} och {b}");
-                    }
-                }
+    {
+        player = Console.ReadLine();
+        int.TryParse(player, out playerChois);
+        Console.WriteLine();
+        if (playerChois > a || playerChois < b)
+        {
+            Console.WriteLine($"skriv ett tall mellan {b} och {a}");
+        }
+    }
 }
 
 void fight()
@@ -204,19 +204,23 @@ void fight()
 
             monsterAppearance(level); // visar monstrets nuvarande HP, DEF och ATK 
             Console.WriteLine($"Ditt liv {playerHealth}, armor {playerArmor}"); // visar spelarens nuvarande HP och Armor
-            Console.WriteLine("1. attack  2. försvara  3. föremål  4. fly (40% chans)");
+            Console.WriteLine("1. attack  2. försvara  3. föremål  4. fly (30% chans)");
 
             while (success == false || playerMove > 4 || playerMove < 1)
             {
                 player = Console.ReadLine();
                 success = int.TryParse(player, out playerMove);
                 Console.WriteLine();
+                if (playerMove > 4 || playerMove < 1)
+                {
+                    Console.WriteLine("skriv ett tall mellan 1 och 4");
+                }
             }
 
             if (playerMove == 1) // om spelaren väljer attack
             {
                 Console.WriteLine($"1. {playerAttack} dmg 80% success  2. {playerAttack + 10} dmg 50% success  3. {playerAttack + 30} dmg 20% success  4. backa");
-                TryParseChoic(4,1);
+                TryParseChoic(4, 1);
 
                 chance = Random.Shared.Next(1, 11);
 
@@ -236,7 +240,6 @@ void fight()
                         playerTurn = false;
                     }
                 }
-
                 if (playerChois == 4)
                 {
                     playerMove = 0;
@@ -248,7 +251,7 @@ void fight()
             {
                 playerDefens = 2 * playerArmor;
                 Console.WriteLine($"1. skyda dig (tar {playerDefens + playerArmor} minder dmg)  2. backa");
-                TryParseChoic(2,1);
+                TryParseChoic(2, 1);
 
                 if (playerChois == 1)
                 {
@@ -265,7 +268,7 @@ void fight()
             {
                 Console.WriteLine($"1. hälsodryck({item})  2. backa");
 
-                TryParseChoic(2,1);
+                TryParseChoic(2, 1);
 
                 if (playerChois == 1 && item > 0)
                 {
@@ -297,11 +300,10 @@ void fight()
                 }
                 int escape = Random.Shared.Next(1, 11);
 
-                if (escape > 6)
+                if (escape > 7)
                 {
                     Console.WriteLine("Du flyde");
                     theEscape = true;
-                    playerTurn = false;
                 }
                 else
                 {
@@ -398,6 +400,7 @@ void shop()
 
     while (playerChois != 4) // fortsätter tills spelaren lämnar 
     {
+        playerChois = 100;
         Console.WriteLine();
         Console.WriteLine($"du har {gold} guld");
         for (int i = 0; i < 3; i++)
@@ -406,13 +409,13 @@ void shop()
         }
         Console.WriteLine("4. lämna affär");
 
-        TryParseChoic(4,0);
+        TryParseChoic(4, 1);
 
-        itemChois(4, 0);
+        itemChois(4, 1);
     }
 }
 
-void itemChois (int a, int b)
+void itemChois(int a, int b)
 {
     if (playerChois != a && playerChois > b)
     {
