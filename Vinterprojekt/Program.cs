@@ -1,5 +1,5 @@
 ﻿// allt som handlar om spelaren
-int playerMove = 0;
+int playerMove = 100;
 int playerArmor = 1;
 int playerDefens = 0;
 int playerAttack = 10;
@@ -8,6 +8,7 @@ List<int> damageChance = [2, 5, 8];
 int playerChois = 100;
 int playerHealth = 100;
 string player = "";
+string yesNo = "";
 bool playerTurn = true;
 bool theEscape = false;
 
@@ -24,7 +25,7 @@ List<string> attcakMiss = ["Slimet hoppar mot dig och du undvek precis i tid", "
 int level = 1;
 
 // värden och text som har med shop att göra
-List<string> shopItems = ["hälsodryck", "skydd (+3 armor)", "slipsten (+10 dmg)"]; 
+List<string> shopItems = ["hälsodryck", "skydd (+3 armor)", "slipsten (+10 dmg)"];
 List<int> itemPrices = [2, 5, 10];
 
 int chance = 0; // påverkar bådas chans att träffa
@@ -41,7 +42,7 @@ while (playAgain == true)
     playerHealth = 100;
     level = 1;
 
-    game();
+    Game();
     if (playerHealth <= 0)
     {
         if (storyProgres < 3) // gör så att spelet inte kraschar om man dör väldigt mycket
@@ -50,13 +51,7 @@ while (playAgain == true)
         }
 
         Console.WriteLine("Du dog. Vill du försöka igen? Y/N");
-        string yesNo = Console.ReadLine().ToUpper();
-
-        while (yesNo != "Y" && yesNo != "N")
-        {
-            Console.WriteLine("skriv Y för ja eller N för nej");
-            yesNo = Console.ReadLine().ToUpper();
-        }
+        YesOrNo();
 
         if (yesNo == "Y")
         {
@@ -68,8 +63,6 @@ while (playAgain == true)
         {
             playAgain = false;
         }
-
-        yesNo = "";
         Console.WriteLine();
     }
 
@@ -83,13 +76,7 @@ while (playAgain == true)
         storyProgres = 0;
 
         Console.WriteLine("Du besegrade Slime kungen. Vill du spela igen? Y/N");
-        string yesNo = Console.ReadLine().ToUpper();
-
-        while (yesNo != "Y" && yesNo != "N")
-        {
-            Console.WriteLine("skriv Y för ja eller N för nej");
-            yesNo = Console.ReadLine().ToUpper();
-        }
+        YesOrNo();
 
         if (yesNo == "Y")
         {
@@ -99,23 +86,17 @@ while (playAgain == true)
         {
             playAgain = false;
         }
-        yesNo = "";
         Console.WriteLine();
     }
 }
 
-void game()
+void Game()
 {
     Console.WriteLine(story[storyProgres]);
     Console.WriteLine("");
-    Console.WriteLine("I det första rummet finns det en skat kista och en dör. vill du öppna kistan? Y/N");
-    string yesNo = Console.ReadLine().ToUpper();
+    Console.WriteLine("I det första rummet finns det en skat kista och en dörr. vill du öppna kistan? skriv Y eller N ");
+    YesOrNo();
 
-    while (yesNo != "Y" && yesNo != "N")
-    {
-        Console.WriteLine("skriv Y för ja eller N för nej");
-        yesNo = Console.ReadLine().ToUpper();
-    }
     Console.WriteLine();
 
     if (yesNo == "Y")
@@ -132,14 +113,14 @@ void game()
 
     Console.WriteLine("När du går igenom blir du bemöt av en");
 
-    fight();  // allt som har med striden att göra 
+    Fight();  // allt som har med striden att göra 
 
     if (playerHealth > 0)
     {
         Console.WriteLine();
         Console.WriteLine("I det nya rummet så finns två dörrar. En av dörrarna är i metall och har ett rött x på sig.");
-        Console.WriteLine("Den andra dörren är i trä och har en skylt med något som liknar ett stånd");
-        Console.WriteLine("Vilken dörr går du igenom? (1 för metall 2 för trä)");
+        Console.WriteLine("Den andra dörren är i trä och har en skylt med något som liknar en butik");
+        Console.WriteLine("Vilken dörr går du igenom? (skriv 1 för metall och 2 för trä)");
 
         TryParseChoic(2, 1);
 
@@ -147,18 +128,17 @@ void game()
         {
             Console.WriteLine("Du går mott metal dörren och hör något bankande på dörren, när du öppna den så kom");
             Console.WriteLine("en stor Slime i hög far rakt emot dig och misade dig med ett hårstrå och framför dig stog en");
-            fight();
+            Fight();
             if (playerHealth > 0)
             {
-                shop();
+                Shop();
             }
         }
         else
         {
-            shop();
+            Shop();
             level++;
         }
-
     }
 
     if (playerHealth > 0)
@@ -168,43 +148,50 @@ void game()
         Console.WriteLine("När du kom in i rummet så märkte du att rummet var väldigt öppen nästan som ett tron rum för en kung");
         Console.WriteLine("det är då du la märke till att en stor skugga satt på en torn i längst back i rummet och du mötte ");
 
-        fight();
+        Fight();
     }
-
 }
 
-void TryParseChoic(int a, int b)
+void TryParseChoic(int maxNumber, int minNumber)
 {
-    while (playerChois > a || playerChois < b) // sålänge spelaren inte väljer något av ovan stående
+    while (playerChois > maxNumber || playerChois < minNumber) // så länge spelaren inte väljer något givet tal
     {
         player = Console.ReadLine();
         int.TryParse(player, out playerChois);
         Console.WriteLine();
-        if (playerChois > a || playerChois < b)
+        if (playerChois > maxNumber || playerChois < minNumber)
         {
-            Console.WriteLine($"skriv ett tall mellan {b} och {a}");
+            Console.WriteLine($"skriv ett tall från {minNumber} och {maxNumber}");
         }
     }
 }
 
-void fight()
+void Fight()
 {
-    monster(level); // ger monstret hur mycket HP, DEF och ATK som det ska ha
+    Monster(level); // ger monstret hur mycket HP, DEF och ATK som det ska ha
     playerChois = 0; // gör så att tidigare Chois inte påverkar striden
 
+    // så länge spelaren och monstret lever eller spelaren inte har flyt
     while (playerHealth > 0 && monsterHealth > 0 && theEscape == false)
     {
         bool success = false;
         while (playerTurn == true && playerHealth > 0 && monsterHealth > 0 && theEscape == false)
         {
-            for (int i = 0; i < 3; i++) // ger ett mellan rum från texten innan striden startade och för texten som säger att du missa eller träffa
+            // ger ett mellan rum från texten innan striden startade och för texten som säger att du missa eller träffa
+            for (int i = 0; i < 3; i++) 
             {
                 Console.WriteLine();
             }
 
-            monsterAppearance(level); // visar monstrets nuvarande HP, DEF och ATK 
+            MonsterAppearance(level); // visar monstrets nuvarande HP, DEF och ATK 
             Console.WriteLine($"Ditt liv {playerHealth}, armor {playerArmor}"); // visar spelarens nuvarande HP och Armor
             Console.WriteLine("1. attack  2. försvara  3. föremål  4. fly (30% chans)");
+            if (playerMove == 100) // visas första gången spelaren går in i strid
+            {
+                // förklarar i mer ditalj vad det är man ska göra
+                Console.WriteLine("");
+                Console.WriteLine("skriv numret till vänster av handlingen du vill göra");
+            }
 
             while (success == false || playerMove > 4 || playerMove < 1)
             {
@@ -213,13 +200,13 @@ void fight()
                 Console.WriteLine();
                 if (playerMove > 4 || playerMove < 1)
                 {
-                    Console.WriteLine("skriv ett tall mellan 1 och 4");
+                    Console.WriteLine("skriv ett tall från 1 och 4");
                 }
             }
 
             if (playerMove == 1) // om spelaren väljer attack
             {
-                Console.WriteLine($"1. {playerAttack} dmg 80% success  2. {playerAttack + 10} dmg 50% success  3. {playerAttack + 30} dmg 20% success  4. backa");
+                Console.WriteLine($"1. {playerAttack} dmg 80% success  2. {playerAttack + playerDamage[1]} dmg 50% success  3. {playerAttack + playerDamage[2]} dmg 20% success  4. backa");
                 TryParseChoic(4, 1);
 
                 chance = Random.Shared.Next(1, 11);
@@ -292,12 +279,9 @@ void fight()
 
             if (playerMove == 4 && playerTurn == true) // om splaren väljer fly
             {
-                string yesNo = "";
                 Console.WriteLine("är du säker? Y/N");
-                while (yesNo != "Y" && yesNo != "N")
-                {
-                    yesNo = Console.ReadLine().ToUpper();
-                }
+                YesOrNo();
+
                 int escape = Random.Shared.Next(1, 11);
 
                 if (escape > 7)
@@ -357,14 +341,14 @@ void fight()
     level++;
 }
 
-void monster(int level) // säger hur "starkt" ett monster kommer vara beroende på level
+void Monster(int level) // säger hur "starkt" ett monster kommer vara beroende på level
 {
     monsterHealth = 25 * level;
     monsterAttack = 15 * level;
     monsterDefens = 0 + level;
 }
 
-void monsterAppearance(int level) // skriver ut vilket monster det är och alla monstrets variabler
+void MonsterAppearance(int level) // skriver ut vilket monster det är och alla monstrets variabler
 {
     if (level == 1)
     {
@@ -392,7 +376,8 @@ void monsterAppearance(int level) // skriver ut vilket monster det är och alla 
     }
 }
 
-void shop()
+
+void Shop()
 {
     Console.WriteLine();
     Console.WriteLine("Du rör dig mott trä dörren och hör en röst mumlande på andra sidan.");
@@ -402,22 +387,24 @@ void shop()
     {
         playerChois = 100;
         Console.WriteLine();
-        Console.WriteLine($"du har {gold} guld");
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++) // skriver ut alla val spelaren kan välja mellan samt vad det kostar
         {
             Console.WriteLine($"{i + 1}. {shopItems[i]} för {itemPrices[i]} guld"); // skriver upp vad spelaren kan köpa och vad det kostar 
         }
         Console.WriteLine("4. lämna affär");
+        Console.WriteLine($"du har {gold} guld");
 
         TryParseChoic(4, 1);
 
-        itemChois(4, 1);
+        ItemChois(4, 1);
     }
 }
 
-void itemChois(int a, int b)
+// en metod för att kolla vilket föremål spelaren valde och vad det kostar
+// samt kollar om spelaren har råd 
+void ItemChois(int maxNumber, int minNumber) 
 {
-    if (playerChois != a && playerChois > b)
+    if (playerChois != maxNumber && playerChois > minNumber)
     {
         if (gold >= itemPrices[playerChois - 1]) // kollar om spelaren har råd med det dem valde
         {
@@ -439,6 +426,19 @@ void itemChois(int a, int b)
         else
         {
             Console.WriteLine("Du har inte råd");
+        }
+    }
+}
+
+void YesOrNo() // en metod för när spelaren ska göra ett val mellan ja och nej
+{
+    yesNo = "";
+    while (yesNo != "Y" && yesNo != "N") // så länge spelaren inte skriver Y eller N
+    {
+        yesNo = Console.ReadLine().ToUpper();
+        if (yesNo != "Y" && yesNo != "N")
+        {
+            Console.WriteLine("skrive Y för ja och N för nej"); // säger till spelaren vad de behöver göra igen
         }
     }
 }
