@@ -6,9 +6,9 @@ int playerAttack = 10;
 List<int> playerDamage = [0, 10, 30];
 List<int> damageChance = [2, 5, 8];
 int playerChois = 100;
-int playerHealth = 100;
-string player = "";
-string yesNo = "";
+int playerHealth;
+string player;
+string yesNo;
 bool playerTurn = true;
 bool theEscape = false;
 
@@ -28,12 +28,16 @@ int level = 1;
 List<string> shopItems = ["hälsodryck", "skydd (+3 armor)", "slipsten (+10 dmg)"];
 List<int> itemPrices = [2, 5, 10];
 
-int chance = 0; // påverkar bådas chans att träffa
+int chance; // påverkar bådas chans att träffa
 
 bool playAgain = true; // om spelaren vill spela igen
 
 // gör det mer intreserand att läsa början igen plus ger bakgrund till hur du fick alla saker
-List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.", "Du vet vad som måste göras.",];
+List<string> story = ["Du är en äventyrare som har i uppgift att undersöka och töma en fängelsehåla(duengon) på skater och monster!", 
+    "Din far var en äventyrare som skulle undersöka en fängelsehåla men han återvände aldrig. En dag kom en annan äventyrare med alla din fars ägodelar och du bästemer dig för att avsluta det din far hade startat.", 
+    "Senda du var ung så hade du hör att din farfar hade ofrat sitt liv för din fars bästa och en dag begav sig din far att göra det samma och när du fick din fars ägodelar så viste du redan vad som behövde ske.", 
+    "Du vet vad som måste göras."
+    ];
 int storyProgres = 0;
 
 while (playAgain == true)
@@ -115,7 +119,7 @@ void Game()
 
     Fight();  // allt som har med striden att göra 
 
-    if (playerHealth > 0)
+    if (playerHealth > 0) // om spelaren lever
     {
         Console.WriteLine();
         Console.WriteLine("I det nya rummet så finns två dörrar. En av dörrarna är i metall och har ett rött x på sig.");
@@ -129,7 +133,7 @@ void Game()
             Console.WriteLine("Du går mott metal dörren och hör något bankande på dörren, när du öppna den så kom");
             Console.WriteLine("en stor Slime i hög far rakt emot dig och misade dig med ett hårstrå och framför dig stog en");
             Fight();
-            if (playerHealth > 0)
+            if (playerHealth > 0) // om spelaren lever
             {
                 Shop();
             }
@@ -141,7 +145,7 @@ void Game()
         }
     }
 
-    if (playerHealth > 0)
+    if (playerHealth > 0) // om spelaren lever
     {
         Console.WriteLine();
         Console.WriteLine("Efter du handlade det du fan viktigt så fortaste du till nästa rum.");
@@ -345,7 +349,7 @@ void Monster(int level) // säger hur "starkt" ett monster kommer vara beroende 
 {
     monsterHealth = 25 * level;
     monsterAttack = 15 * level;
-    monsterDefens = 0 + level;
+    monsterDefens = level * level;
 }
 
 void MonsterAppearance(int level) // skriver ut vilket monster det är och alla monstrets variabler
@@ -369,8 +373,8 @@ void MonsterAppearance(int level) // skriver ut vilket monster det är och alla 
     if (level == 3)
     {
         Console.WriteLine();
-        Console.WriteLine("           ^^^^^^^   ");
-        Console.WriteLine("Slime KING( *___* )");
+        Console.WriteLine("            ^^^^^^^   ");
+        Console.WriteLine("Slime KING ( *___* )");
         Console.WriteLine($"ATK {monsterAttack} HP {monsterHealth} DEF {monsterDefens}");
         Console.WriteLine();
     }
